@@ -1,0 +1,47 @@
+"""python lang"""
+import time
+
+class AlarmClock2(object):
+    """Class representing an Alarm Clock."""
+
+    def __init__(self, time_now="00:00:00", alarm_time="00:00:00"):
+        self.time_now = time_now
+        self.alarm_time = alarm_time
+        self.second_remain = self.second_remaining()
+
+    def second_remaining(self):
+        """Calculate the remaining seconds until the alarm."""
+        hour_now, min_now, sec_now = map(int, self.time_now.split(":"))
+        hour_alarm, min_alarm, sec_alarm = map(int, self.alarm_time.split(":"))
+
+        sec_now_total = hour_now * 3600 + min_now * 60 + sec_now
+        sec_alarm_total = hour_alarm * 3600 + min_alarm * 60 + sec_alarm
+
+        sec_remain = sec_alarm_total - sec_now_total
+        # Handle case where alarm is set for the next day
+        if sec_remain < 0:
+            sec_remain += 24 * 3600
+
+        return sec_remain
+
+    def display_remain(self):
+        """Display the time remaining until the alarm in hours, minutes, and seconds."""
+        hours, remainder = divmod(self.second_remain, 3600)
+        minutes, seconds = divmod(remainder, 60)
+        return f"{hours} hours, {minutes} minutes, {seconds} seconds"
+
+    def alarm_after_seconds(self):
+        """Wait for the specified time and then notify the user."""
+        print(f"Alarm set for {self.second_remain} seconds. Waiting...")
+        time.sleep(self.second_remain)  # Wait for the specified time
+        print("Time's up! Playing sound...")
+
+
+def set_clock_and_alarm():
+    """Function to set the clock and alarm and trigger the alarm."""
+    time_now = input('Set your current time (example: "21:05:00"): ')
+    alarm_time = input('Set your alarm time (example: "21:23:00"): ')
+    
+    obj = AlarmClock2(time_now, alarm_time)
+    print(f"Time remaining until alarm: {obj.display_remain()}")
+    obj.alarm_after_seconds()
